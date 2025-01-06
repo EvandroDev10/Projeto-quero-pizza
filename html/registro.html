@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section class="endereco-section-container container">
+        <div class="endereco-div-container">
+            <div class="endereco-section-container-content texto-preto">
+                <div>
+                    <h2 class="e texto-preto">Informe seu endereço!</h2>
+                </div>
+                    <form method="get" action=".">
+                        <div class="form-container-endereco"></div>
+                        <label>Nome </label>
+                        <input type="text" name="nome" id="nome" name="nome" required>
+                        <p class="e"></p>
+                        <label>CPF: </label>
+                        <input type="text" name="cpf" id="cpf" name="cpf" maxlength="11" required>
+                        <p class="e"></p>
+                        <label>CEP:</label>
+                        <input name="cep" type="text" id="cep" value="" size="10" maxlength="9" onblur="pesquisacep(this.value);" /></label>
+                        <p class="e"></p>
+                        <label>Rua:</label>
+                        <input name="rua" type="text" id="rua" size="60" />
+                        <p class="e"></p>   
+                        <label>Bairro:</label>
+                        <input name="bairro" type="text" id="bairro" size="40" />
+                        <p class="e"></p>   
+                        <label>Cidade:</label>
+                        <input name="cidade" type="text" id="cidade" size="40" />
+                        <p class="e"></p>   
+                        <label>Estado:</label>
+                        <input name="uf" type="text" id="uf" size="2" />
+                        <p class="e"></p>    
+                        <label>Complemento:</label>
+                        <input name="complemento" type="text" id="complemento">
+                        <p class="e"></p>
+                    </div>      
+                    </form>
+            </div>
+        </div>
+    </section> 
+</body>
+</html>

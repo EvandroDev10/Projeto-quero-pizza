@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/template.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/js/scriptGeral.js"></script>
+    <link rel="icon" href="/img/icon.png" class="icone-pagina">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quero Pizza</title>
+</head>
+<body>
+    <script>
+        let orderItems = [];
+        let totalPrice = 0;
+    
+
+        function selecionar(index) {
+            const pizzaElements = document.getElementsByClassName('pizza-content');
+            const selectedPizza = pizzaElements[index];
+            const pizzaName = selectedPizza.querySelector('[name="tipo"]').textContent;
+            const pizzaPrice = selectedPizza.querySelector('[name="custo"]').textContent;
+    
+            // Adicionar ao lista de pedidos
+            orderItems.push({
+                name: pizzaName,
+                price: pizzaPrice
+            });
+    
+            // Calcular preço total
+            totalPrice += parseFloat(pizzaPrice.replace(',', '.'));
+    
+            // Atualizar exibição do pedido
+            const orderContainer = document.getElementById('DIVordem');
+            const orderList = document.getElementById('order-list') || document.createElement('div');
+            orderList.id = 'order-list';
+            orderList.innerHTML = orderItems.map((item, idx) =>
+                `<div class="order-item">
+                <span>${item.name} - R$ ${item.price}</span>
+                <button onclick="removeItem(${idx})">❌</button>
+            </div>`
+            ).join('');
+    
+            orderContainer.appendChild(orderList);
+        }
+    
+        // Função para remover item do pedido
+        function removeItem(index) {
+            // Subtrair o preço do item removido
+            totalPrice -= parseFloat(orderItems[index].price.replace(',', '.'));
+    
+            // Remover item
+            orderItems.splice(index, 1);
+    
+            // Atualizar lista de pedidos
+            const orderList = document.getElementById('order-list');
+            orderList.innerHTML = orderItems.map((item, idx) =>
+                `<div class="order-item">
+                <span>${item.name} - R$ ${item.price}</span>
+                <button onclick="removeItem(${idx})">❌</button>
+            </div>`
+            ).join('');
+        }
+    
+        // Função para registrar pedido e enviar via WhatsApp
+        function registrarPedido() {
+            // Solicitar nome do cliente
+            const customerName = prompt('Por favor, digite seu nome:');
+            if (!customerName) return;
+    
+            // Solicitar endereço de entrega
+            const customerAddress = prompt('Digite seu endereço para entrega:');
+            if (!customerAddress) return;
+    
+            // Validar pedido
+            if (orderItems.length === 0) {
+                alert('Seu pedido está vazio. Selecione pelo menos uma pizza.');
+                return;
+            }
+    
+            // Construir mensagem do pedido
+            const orderMessage = `
+    Novo Pedido - Quero Pizza
+    
+    Nome: ${customerName}
+    Endereço: ${customerAddress}
+    
+    Pedido:
+    ${orderItems.map(item => `• ${item.name} - R$ ${item.price}`).join('\n')}
+    
+    Total: R$ ${totalPrice.toFixed(2).replace('.', ',')}
+    
+    Total de itens: ${orderItems.length}
+    `;
+    
+            // Codificar mensagem para WhatsApp
+            const encodedMessage = encodeURIComponent(orderMessage);
+    
+            // Número do WhatsApp (número da Quero Pizza)
+            const whatsappNumber = '+55 11 93707-9346';
+    
+            // URL do WhatsApp com mensagem pré-preenchida
+            const whatsappUrl = "https://api.whatsapp.com/send/?phone=${whatsappNumber}&text=${encodedMessage}&type=phone_number&app_absent=0";
+    
+            // Abrir WhatsApp em nova aba
+            window.open(whatsappUrl, '_blank');
+    
+            // Limpar pedido após envio
+            orderItems = [];
+            totalPrice = 0;
+            document.getElementById('order-list').innerHTML = '';
+        }
+    
+    </script>
+<div class="content-wrapper">
+    <header class="header-container">
+        <div class="header-content">
+            <nav>
+                <img src="/img/icon.png" alt="Quero Pizza Icone">
+                <ul>
+                    <a href="index.html" class="texto-branco">Home</a>
+                </ul>
+                <ul>
+                    <a href="#cardapio" class="texto-branco">Cardápio</a>
+                </ul>
+                <ul>
+                    <a href="#casa" class="texto-branco">Nossa Casa</a>
+                </ul>
+                <ul>
+                    <a href="https://www.ifood.com.br/delivery/osasco-sp/quero-pizza-veloso/f206325b-9024-447e-b399-64589dc29d93" class="texto-branco">Delivery</a>
+                </ul>
+                <ul>
+                    <a href="feedback.php" class="texto-branco">Feedback</a>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="banner-section-container">
+        <div class="banner-div-container" id="home">
+            <div class="banner-section-container-content">
+                <div>
+                    <h1 class="banner-title e">O melhor sabor de Osasco</h1>
+                </div>
+                <div>
+                    <h2 class="banner-text e texto-branco">Venha descobrir nosso cardápio especial</h2>
+                </div>
+                <div>
+                    <p class="banner-desc e texto-branco" id="casa">Temos Pizza de Calabresa, Brócolis, Mussarela, Portuguesa e muito mais!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="container info">
+        <div class="caixa-informacoes">
+            <div>
+                <h2 class="medio" style="
+                padding-top: 30px;
+            ">Quero Pizza</h2>
+                <hr>
+            </div>
+            
+            <div class="caixa-informacao-content">
+                <div class="caixa-informacao-content-wrapper">
+                <div>
+                    <div class="info">
+                        
+                        <img class="icone" src="/img/clock.png" alt="Quero Pizza" srcset="">
+                        <h3>Horários</h3>
+                    </div>
+                    <p>Das 16:00 até às 00:00</p>
+                </div>
+                <div>
+                    <div class="info">
+                        <img class="icone" src="/img/location.png" alt="Quero Pizza">
+                        <h3>Endereço</h3>    
+                    </div>
+                    <p>Av. Santiago Rodilha, 925-935 - Veloso, Osasco - SP, 06154-000</p>
+                    <a class="texto-preto" href="https://www.google.com/maps/place/Quero+Pizza/@-23.5616963,-46.817481,4335m/data=!3m1!1e3!4m10!1m2!2m1!1squero+pizza!3m6!1s0x94cefff2e965fdc9:0x9b3bee92738233a2!8m2!3d-23.5616963!4d-46.8071813!15sCgtxdWVybyBwaXp6YVoNIgtxdWVybyBwaXp6YZIBEHBpenphX3Jlc3RhdXJhbnTgAQA!16s%2Fg%2F11c6f5d1tz?entry=ttu&g_ep=EgoyMDI0MTExOS4yIKXMDSoJLDEwMjExMjM0SAFQAw%3D%3D">Ver mapa</a>
+                </div>
+                <div>
+                    <div class="info">
+                        <img class="icone" src="/img/phone.png" alt="Quero Pizza">
+                        <h3  id="cardapio">Telefone</h3>
+                    </div>
+                    <a href="https://api.whatsapp.com/send/?phone=5511937079346&text&type=phone_number&app_absent=0" class="texto-preto">(11) 93707-9346</a>
+                </div>
+                </div>
+                <div>
+                    <img src="/img/Foto1.png" alt="Foto1" style="
+                    margin-top: 5%;
+                    margin-bottom: 5%;
+                ">
+                </div>
+            </div>
+            </div>
+        </section>      
+        <section class="list-section-container container">
+            <div class="list-div-container">
+            <div class="container">
+                <h1 class="texto-branco e menu grande">M E N U</h1>
+            </div>
+            <div class="pizza-container texto-branco">
+                <div class="pizza-content" onclick="selecionar(0)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Mussarela</h3>
+                        <p class="e ingrediente">Mussarela com molho de tomate temperado</p>
+                    </div>
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">25,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(1)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Ricota</h3>
+                        <p class="e ingrediente">Ricota com molho de tomate</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">44,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(2)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Bacon</h3>
+                        <p class="e ingrediente">Mussarela com bacon e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">40,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(3)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Brócolis</h3>
+                        <p class="e ingrediente">Brócolis, bacon e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">50,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(4)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Calabresa</h3>
+                        <p class="e ingrediente">Calabresa, cebola e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">25,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(5)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Búfala</h3>
+                        <p class="e ingrediente">Mussarela de búfala</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">40,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(6)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Portuguesa</h3>
+                        <p class="e ingrediente">Presunto, ovo, cebola e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">30,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(7)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Alho</h3>
+                        <p class="e ingrediente">Alho frito, parmesão e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">48,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(8)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Catupiry</h3>
+                        <p class="e ingrediente">Catupiry com molho de tomate</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">37,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(9)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Vegetariana</h3>
+                        <p class="e ingrediente">Champignon, palmito, brócolis e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">53,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(10)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Abobrinha</h3>
+                        <p class="e ingrediente">Abobrinha grelhada em conserva com parmesão</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">26,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(11)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Escarola</h3>
+                        <p class="e ingrediente">Escarola temperada com aliche, cebola, mussarela e azeitonas verdes</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">66,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(12)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Margarida</h3>
+                        <p class="e ingrediente">Mussarela, parmesão, rodelas de tomate e manjericão</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">41,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(13)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Milho</h3>
+                        <p class="e ingrediente">Catupiry coberto de milho</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">26,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(14)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Moda da Casa</h3>
+                        <p class="e ingrediente">Presunto, azeitonas verdes picadas, coberta com mussarela</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">36,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(15)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Napolitana</h3>
+                        <p class="e ingrediente">Mussarela, parmesão e molho de tomate</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">36,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(16)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Provolone</h3>
+                        <p class="e ingrediente">Provolone com molho de tomate</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">47,00</p>
+                    </div>
+                </div>
+                
+                <div class="pizza-content" onclick="selecionar(17)">
+                    <div class="pizza-content-info">
+                        <h3 class="e medio texto-amarelo" name="tipo">Sardela</h3>
+                        <p class="e ingrediente">Filé de cavalinha, berinjela curtida, cebola e azeitonas verdes, mussarela</p>
+                    </div>  
+                    <div class="pizza-content-price">
+                        <p class="e medio" name="custo">46,00</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    <section class="order-section-container container">
+    <div class="order-div-container" id="DIVordem">
+        <div class="order-div-title-confirm">
+            <div class="order-div-title">
+                <img src="/img/entregaicon.png" alt="enfeite-entrega" class="icone">
+                <h1 class="menu">SEU PEDIDO</h1>
+            </div>
+            <div class="order-div-confirm texto-branco" type="button" onclick="registrarPedido()">
+                <p>Confirmar</p>
+            </div> 
+        </div>
+    </div>
+    </section>
+    <footer class="footer-container">
+        <div class="footer-content texto-branco">
+            <div>
+                <p>©2024 Quero Pizza. - Todos os direitos reservados</p>
+            </div>
+            <div>
+                <p>www.queropizza.com.br</p>
+            </div>
+        </div>
+    </footer>
+</div>
+<section class="order-section-container container">
+    <div class="order-div-title-confirm">
+        <div id="order-list"></div>
+</section>
+</body>
+</html>
